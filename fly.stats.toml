@@ -1,0 +1,41 @@
+# Fly.io config — Word Lava CLIMB STATS server (worldwide % + friends per camp).
+# Deploy:  fly launch --copy-config --config fly.stats.toml --no-deploy   (first time)
+#          fly deploy --config fly.stats.toml
+# A volume gives the board durability across restarts (optional but recommended):
+#          fly volumes create wlstats --size 1 --config fly.stats.toml
+app = "wordlava-stats"
+primary_region = "iad"   # change to the region nearest your players (e.g. "lhr", "sjc")
+
+[build]
+
+[env]
+  PORT = "8082"
+  STATS_FILE = "/data/wordlava-stats.json"   # persists when the volume below is mounted
+
+[processes]
+  app = "node wordlava-stats.js"
+
+[http_service]
+  internal_port = 8082
+  force_https = true          # gives you https:// → set CLIMB_STATS.statsUrl to the https URL
+  auto_stop_machines = false  # keep counts warm
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/health"
+
+# Optional durable storage. Remove this block (and STATS_FILE above) to run memory-only.
+[[mounts]]
+  source = "wlstats"
+  destination = "/data"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

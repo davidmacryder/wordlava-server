@@ -1,0 +1,33 @@
+# Fly.io config — Word Lava RELAY (the WebSocket service matched players connect to).
+# Deploy:  fly launch --copy-config --config fly.relay.toml --no-deploy   (first time)
+#          fly deploy --config fly.relay.toml
+app = "wordlava-relay"
+primary_region = "iad"   # change to the region nearest your players (e.g. "lhr", "sjc")
+
+[build]
+
+[env]
+  PORT = "8080"
+
+[processes]
+  app = "node wordlava-lan-server.js"
+
+[http_service]
+  internal_port = 8080
+  force_https = true          # gives you https:// → connect the game with wss://
+  auto_stop_machines = false  # keep the relay always-on so live games aren't dropped
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/health"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

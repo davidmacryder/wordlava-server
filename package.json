@@ -1,0 +1,15 @@
+{
+  "name": "wordlava-server",
+  "version": "1.0.0",
+  "description": "Word Lava backend \u2014 zero-dependency WebSocket relay + matchmaker + Climb stats server.",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node wordlava-lan-server.js",
+    "start:relay": "node wordlava-lan-server.js",
+    "start:matchmaker": "node wordlava-matchmaker.js",
+    "start:stats": "node wordlava-stats.js"
+  }
+}

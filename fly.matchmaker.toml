@@ -1,0 +1,37 @@
+# Fly.io config — Word Lava MATCHMAKER (queues players and hands pairs to the relay).
+# Deploy AFTER the relay, then point RELAY_PUBLIC_URL at the relay's public URL:
+#   fly launch --copy-config --config fly.matchmaker.toml --no-deploy
+#   fly secrets set RELAY_PUBLIC_URL="wss://wordlava-relay.fly.dev" --config fly.matchmaker.toml
+#   fly deploy --config fly.matchmaker.toml
+app = "wordlava-matchmaker"
+primary_region = "iad"
+
+[build]
+
+[env]
+  PORT = "8090"
+  # You can set this here, or override it with `fly secrets set RELAY_PUBLIC_URL=...`
+  RELAY_PUBLIC_URL = "wss://wordlava-relay.fly.dev"   # <-- change to YOUR relay's public URL
+
+[processes]
+  app = "node wordlava-matchmaker.js"
+
+[http_service]
+  internal_port = 8090
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1
