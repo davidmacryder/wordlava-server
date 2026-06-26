@@ -1,15 +1,9 @@
 {
-  "name": "wordlava-server",
+  "name": "wordlava-auth",
   "version": "1.0.0",
-  "description": "Word Lava backend \u2014 zero-dependency WebSocket relay + matchmaker + Climb stats server.",
   "private": true,
-  "engines": {
-    "node": ">=18"
-  },
-  "scripts": {
-    "start": "node wordlava-lan-server.js",
-    "start:relay": "node wordlava-lan-server.js",
-    "start:matchmaker": "node wordlava-matchmaker.js",
-    "start:stats": "node wordlava-stats.js"
-  }
+  "main": "wordlava-auth.js",
+  "scripts": { "start": "node wordlava-auth.js" },
+  "dependencies": { "jose": "^5.9.6" },
+  "engines": { "node": ">=18" }
 }
